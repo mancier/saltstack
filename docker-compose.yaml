@@ -1,0 +1,27 @@
+version: '3'
+networks:
+  salt:
+    driver: bridge
+services:
+  master:
+    image: saltstack/salt:3004
+    volumes:
+      - ./master.conf:/etc/salt/master:ro
+      - ./pki/master.pem:/etc/salt/pki/master/master.pem
+      - ./pki/master.pub:/etc/salt/pki/master/master.pub
+      - ./srv:/srv/salt
+    command: |
+      /bin/ash -c "salt-master -c /etc/salt/master -l debug"
+    expose:
+      - 4506
+      - 4505
+
+  minion:
+    image: saltstack/salt:3004
+    volumes:
+      - ./minion.conf:/etc/salt/minion
+    command: |
+      /bin/ash -c "salt-minion -l debug"
+    expose:
+      - 4505
+      - 4506
